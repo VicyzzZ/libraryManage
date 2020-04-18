@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cleve.dao.UserDao">
+    <resultMap id="userMap" type="User">
+        <id property="userID" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="password" column="password"/>
+        <result property="userRole" column="user_role"/>
+        <result property="userCredit" column="user_credit"/>
+        <result property="userBorrowNum" column="user_borrow_num"/>
+        <result property="userSex" column="user_sex"/>
+        <result property="userEmail" column="user_Email"/>
+        <result property="userPhone" column="user_phone"/>
+        <result property="createTime" column="createTime"/>
+    </resultMap>
+
+    <sql id="userColumns">
+        user_id,user_name,password,user_role,user_credit,user_borrow_num,
+        user_sex,user_Email,user_phone,createTime
+    </sql>
+
+    <!--    添加用户-->
+    <insert id="addUser" parameterType="User" keyProperty="userID" useGeneratedKeys="true">
+        INSERT INTO user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="userRole != null">
+                user_role,
+            </if>
+            <if test="userCredit !=null">
+                user_credit,
+            </if>
+            <if test="userBorrowNum!=null">
+                user_borrow_num,
+            </if>
+            <if test="userSex != null">
+                user_sex,
+            </if>
+            <if test="userEmail != null">
+                user_Email,
+            </if>
+            <if test="userPhone != null">
+                user_phone,
+            </if>
+            <if test="createTime != null">
+                createTime
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="userName != null">
+                #{userName, jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password, jdbcType=VARCHAR},
+            </if>
+            <if test="userRole != null">
+                #{userRole, jdbcType=INTEGER},
+            </if>
+            <if test="userCredit !=null">
+                #{userCredit, jdbcType=INTEGER},
+            </if>
+            <if test="userBorrowNum!=null">
+                #{userBorrowNum, jdbcType=INTEGER},
+            </if>
+            <if test="userSex != null">
+                #{userSex, jdbcType=INTEGER},
+            </if>
+            <if test="userEmail != null">
+                #{userEmail, jdbcType=VARCHAR},
+            </if>
+            <if test="userPhone != null">
+                #{userPhone, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime, jdbcType=TIMESTAMP}
+            </if>
+        </trim>
+    </insert>
+
+    <!--    通过用户名删除用户-->
+    <delete id="deleteUserByUserName" parameterType="String">
+        DELETE FROM user
+        WHERE user_name = #{userName};
+    </delete>
+
+    <!--    通过用户ID删除用户-->
+    <delete id="deleteUserByUserID" parameterType="int">
+        DELETE FROM user
+        WHERE user_id = #{userID};
+    </delete>
+
+    <!--    更新用户信息-->
+    <update id="updateUser" parameterType="User">
+        UPDATE user
+        SET
+        <if test="userName != null">
+            user_name = #{userName, jdbcType=VARCHAR},
+        </if>
+        <if test="password != null">
+            password = #{password, jdbcType=VARCHAR},
+        </if>
+        <if test="userRole != null">
+            user_role = #{userRole, jdbcType=INTEGER},
+        </if>
+        <if test="userCredit !=null">
+            user_credit = #{userCredit, jdbcType=INTEGER},
+        </if>
+        <if test="userBorrowNum!=null">
+            user_borrow_num = #{userBorrowNum, jdbcType=INTEGER},
+        </if>
+        <if test="userSex != null">
+            user_sex = #{userSex, jdbcType=INTEGER},
+        </if>
+        <if test="userEmail != null">
+            user_Email = #{userEmail, jdbcType=VARCHAR},
+        </if>
+        <if test="userPhone != null">
+            user_phone = #{userPhone, jdbcType=VARCHAR}
+        </if>
+        WHERE user_id = #{userID};
+    </update>
+
+    <!--    用户名获取用户密码-->
+    <select id="getUserPasswordByUserName" parameterType="String" resultType="String">
+        SELECT password
+        FROM user
+        WHERE user_name = #{userName};
+    </select>
+
+    <!--    通过用户名查找用户-->
+    <select id="findUserByUserName" parameterType="String" resultMap="userMap">
+        SELECT <include refid="userColumns"/>
+        FROM user
+        WHERE user_name = #{userName};
+    </select>
+
+    <!--    通过用户 id 查找用户-->
+    <select id="findUserByUserID" parameterType="int" resultMap="userMap">
+        SELECT <include refid="userColumns"/>
+        FROM user
+        WHERE user_id = #{userId};
+    </select>
+
+    <!--    获取所有的用户信息-->
+    <select id="getAllUser" resultMap="userMap">
+        SELECT <include refid="userColumns"/>
+        FROM user;
+    </select>
+
+
+</mapper>

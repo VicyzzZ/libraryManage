@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cleve.dao.LogDao">
+    <resultMap id="logMap" type="Log">
+        <id property="logID" column="log_id"/>
+        <result property="userID" column="user_id"/>
+        <result property="bookID" column="book_id"/>
+        <result property="borrowTime" column="borrow_time"/>
+        <result property="borrowLong" column="borrow_long"/>
+        <result property="returnTime" column="return_time"/>
+        <result property="state" column="state"/>
+        <result property="credit" column="credit"/>
+    </resultMap>
+
+
+    <sql id="logColumns">
+        log_id,user_id,book_id,borrow_time,borrow_long,return_time,state,credit
+    </sql>
+
+    <!--    添加日志-->
+    <insert id="addLog" parameterType="Log" keyProperty="userID" useGeneratedKeys="true">
+        INSERT INTO log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userID != null">
+                user_id,
+            </if>
+            <if test="bookID != null">
+                book_id,
+            </if>
+            <if test="borrowTime != null">
+                borrow_time,
+            </if>
+            <if test="borrowLong != null">
+                borrow_long,
+            </if>
+            <if test="returnTime != null">
+                return_time,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="credit != null">
+                credit
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="userID != null">
+                #{userID},
+            </if>
+            <if test="bookID != null">
+                #{bookID},
+            </if>
+            <if test="borrowTime != null">
+                #{borrowTime},
+            </if>
+            <if test="borrowLong != null">
+                #{borrowLong},
+            </if>
+            <if test="returnTime != null">
+                #{returnTime},
+            </if>
+            <if test="state != null">
+                #{state},
+            </if>
+            <if test="credit != null">
+                #{credit}
+            </if>
+        </trim>
+    </insert>
+
+    <!--    删除日志-->
+    <delete id="deleteLog" parameterType="Log">
+        DELETE
+        FROM log
+        WHERE log.log_id=#{logID};
+    </delete>
+
+
+    <!--    更新日志信息-->
+    <update id="updateLog" parameterType="Log">
+        UPDATE log
+        SET
+        <if test="borrowLong != null">
+            borrow_long = #{borrowLong},
+        </if>
+        <if test="returnTime != null">
+            return_time = #{returnTime},
+        </if>
+        <if test="state != null">
+            state = #{state},
+        </if>
+        <if test="credit != null">
+            credit = #{credit}
+        </if>
+        WHERE log.log_id=#{logID};
+    </update>
+
+    <!--    通过用户ID查找日志-->
+    <select id="findLogByUserID" parameterType="int" resultMap="logMap">
+        SELECT
+        <include refid="logColumns"/>
+        FROM log
+        WHERE user_id = #{userID};
+    </select>
+
+    <!--    通过书籍ID查找日志-->
+    <select id="findLogBybookID" parameterType="String" resultMap="logMap">
+        SELECT
+        <include refid="logColumns"/>
+        FROM log
+        WHERE book_id = #{bookID};
+    </select>
+
+    <!--    通过日志ID查找日志-->
+    <select id="findLogByLogID" resultMap="logMap">
+        SELECT
+        <include refid="logColumns"/>
+        FROM log
+        WHERE log.log_id=#{logID};
+    </select>
+
+    <!--    通过状态sate查找日志-->
+    <select id="findLogBySate" parameterType="int" resultMap="logMap">
+        SELECT
+        <include refid="logColumns"/>
+        FROM log
+        WHERE state = #{state};
+    </select>
+
+    <!--    查找逾期日志-->
+    <select id="getOverLog" resultMap="logMap">
+        SELECT
+        <include refid="logColumns"/>
+        FROM log
+        WHERE (return_time-borrow_time)/(1000*60*60*24) > borrow_long;
+    </select>
+
+    <!--    获取所有日志-->
+    <select id="getAllLog" resultMap="logMap">
+        SELECT
+        <include refid="logColumns"/>
+        FROM log;
+    </select>
+
+</mapper>

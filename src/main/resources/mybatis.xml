@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <typeAliases>
+        <typeAlias alias="Book" type="cleve.entity.Book"/>
+        <typeAlias alias="Category" type="cleve.entity.Category"/>
+        <typeAlias alias="Log" type="cleve.entity.Log"/>
+        <typeAlias alias="User" type="cleve.entity.User"/>
+    </typeAliases>
+</configuration>

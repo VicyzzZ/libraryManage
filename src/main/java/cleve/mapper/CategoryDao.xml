@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cleve.dao.CategoryDao">
+    <resultMap id="categoryMap" type="Category">
+        <id property="categoryID" column="category_id"/>
+        <result property="categoryName" column="category_name"/>
+    </resultMap>
+
+    <resultMap id="categoryAndBookMap" type="Book">
+        <id property="categoryID" column="category_id"/>
+        <result property="categoryName" column="category_name"/>
+        <collection property="books" ofType="Book">
+            <id property="bookID" column="book_id"/>
+            <result property="bookName" column="book_name"/>
+            <result property="bookCategoryID" column="book_category_id"/>
+            <result property="bookAuthor" column="book_author"/>
+            <result property="bookPublish" column="book_publish"/>
+            <result property="bookPrice" column="book_price"/>
+            <result property="bookNum" column="book_num"/>
+            <result property="bookBorrowTimes" column="book_borrow_times"/>
+            <result property="createTime" column="createTime"/>
+        </collection>
+    </resultMap>
+
+    <sql id="categoryColumns">
+        category_id,category_name
+    </sql>
+
+    <!--    添加分类-->
+    <insert id="addCategory" parameterType="Category" keyProperty="categoryID" useGeneratedKeys="true">
+        INSERT INTO category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null">
+                category_name,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null">
+                #{categoryName}
+            </if>
+        </trim>
+    </insert>
+
+    <!--    通过分类名删除分类-->
+    <delete id="deleteCategoryByCategoryName" parameterType="String">
+        DELETE FROM category
+        WHERE category.category_name = #{categoryName};
+    </delete>
+
+    <!--    通过分类ID删除分类-->
+    <delete id="deleteCategoryByCategoryID" parameterType="int">
+        DELETE FROM category
+        WHERE category.category_id = #{categoryID};
+    </delete>
+
+    <!--    更新分类信息-->
+    <update id="updateCategory" parameterType="Category">
+        UPDATE category
+        SET
+        <if test="categoryName != null">
+            category_name = #{categoryName}
+        </if>
+        WHERE category_id = #{categoryID};
+    </update>
+
+    <!--    通过分类名查找分类-->
+    <select id="findCategoryBycategoryName" parameterType="String" resultMap="categoryMap">
+        SELECT
+        <include refid="categoryColumns"/>
+        FROM category
+        WHERE category_name = #{categoryName};
+    </select>
+
+    <!--    通过分类ID查找分类-->
+    <select id="findCategoryBycategoryID" parameterType="int" resultMap="categoryMap">
+        SELECT
+        <include refid="categoryColumns"/>
+        FROM category
+        WHERE category_id = #{categoryID};
+    </select>
+
+    <!--    显示分类中的书籍-->
+    <select id="getAllBooksOfCategory" parameterType="int" resultMap="categoryAndBookMap">
+        SELECT *
+        FROM category C,book B
+        WHERE c.category_id = B.book_category_id AND B.book_category_id =#{categoryID};
+    </select>
+
+    <!--    获取所有的分类信息-->
+    <select id="getAllCategory" resultMap="categoryMap">
+        SELECT <include refid="categoryColumns"/>
+        FROM category
+    </select>
+
+
+</mapper>
